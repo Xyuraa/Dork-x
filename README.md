@@ -4,10 +4,10 @@
 ## Instalations
 ```
 $ pkg install git python
-$ git clone https://github.com/Yutixcode/Dolkings
-$ cd Dolkings
+$ git clone https://github.com/Xyuraa/Dork-x
+$ cd Dork-x
 $ pip install -r requirements.txt
-$ python dolkings.py
+$ python dork-x.py
 ```
 
 ## Get in Touch
