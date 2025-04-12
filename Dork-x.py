@@ -14,12 +14,11 @@ r = '\033[0;91m'
 
 # Fungsi untuk membersihkan layar
 def clear_screen():
-        os.system('clear')
+    os.system('clear')
 
 # Banner
 def print_banner():
     print(f"""{b}
-
 
  /$$$$$$$                      /$$             /$$   /$$
 | $$__  $$                    | $$            | $$  / $$ 
@@ -60,32 +59,31 @@ def dorking():
     except KeyboardInterrupt:
         exit(f"\n{r}Interrupted by user. Exiting...{x}")
 
-# Fungsi Admin Finder
+# Fungsi Admin Finder (tanpa delay)
 def admin_finder():
     clear_screen()
     print_banner()
     try:
         domain = input(f" {b}{u}Domain{w}:{x} {y}")
-        delay = int(input(f" {b}{u}Delay{w}:{x} {y}"))
         print()
 
         # Membaca daftar halaman login admin dari list.txt
         try:
             with open("list.txt", "r") as f:
                 admin_pages = f.readlines()
-                admin_pages = [page.strip() for page in admin_pages]  # Menghapus spasi kosong
+                admin_pages = [page.strip() for page in admin_pages]
         except FileNotFoundError:
             exit(f"{r}File list.txt not found! Please create the file with admin pages list.")
 
         total = 0
-        found_admin_pages = []  # Untuk menyimpan halaman login yang ditemukan
+        found_admin_pages = []
         for page in admin_pages:
             url = f"http://{domain}{page}"
             try:
-                response = requests.get(url, timeout=delay)
+                response = requests.get(url, timeout=5)  # default timeout tanpa input
                 if response.status_code == 200:
                     print(f"{w}{total + 1}) {g}Found: {url}")
-                    found_admin_pages.append(url)  # Menambahkan URL yang ditemukan
+                    found_admin_pages.append(url)
                     total += 1
             except requests.exceptions.RequestException:
                 continue
@@ -94,14 +92,11 @@ def admin_finder():
             print(f"{r}No admin login pages found for {domain}.")
         else:
             print(f"\n{w}Total Admin Pages Found: {g}{total}")
-            # Menyimpan hasil ke file found_admin.txt
             with open("found_admin.txt", "a") as f:
                 for admin_page in found_admin_pages:
                     f.write(f"{admin_page}\n")
             print(f"{w}Results saved to: {g}found_admin.txt")
 
-    except ValueError:
-        exit(f"{r}Input error! Please enter a valid number for delay.")
     except KeyboardInterrupt:
         exit(f"\n{r}Interrupted by user. Exiting...{x}")
 
