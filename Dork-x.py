@@ -6,7 +6,7 @@ from googlesearch import search
 # Warna
 x = '\033[0m'
 u = '\033[4m'
-b = '\033[1;94m'  # biru terang
+b = '\033[1;94m' 
 g = '\033[0;92m'
 y = '\033[0;33m'
 w = '\033[0;37m'
@@ -14,9 +14,6 @@ r = '\033[0;91m'
 
 # Fungsi untuk membersihkan layar
 def clear_screen():
-    if os.name == 'nt':  # Jika menggunakan Windows
-        os.system('cls')
-    else:  # Jika menggunakan Linux atau macOS
         os.system('clear')
 
 # Banner
