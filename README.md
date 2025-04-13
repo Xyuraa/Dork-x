@@ -1,5 +1,5 @@
 # POPX-TOOLS
-<img src="POPX.png"/>
+
 
 ## Instalations
 ```
