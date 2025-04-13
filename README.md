@@ -1,5 +1,5 @@
 # POPX-TOOLS
-<img src="Dork-X.png"/>
+<img src="POPX.png"/>
 
 ## Instalations
 ```
