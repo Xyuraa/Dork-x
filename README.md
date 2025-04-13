@@ -1,13 +1,13 @@
-# Tools Dork-X
+# POPX-TOOLS
 <img src="Dork-X.png"/>
 
 ## Instalations
 ```
 $ pkg install git python
-$ git clone https://github.com/Xyuraa/Dork-x
-$ cd Dork-x
+$ git clone https://github.com/Xyuraa/POPX-TOOLS
+$ cd POPX-TOOLS
 $ pip install -r requirements.txt
-$ python dork-x.py
+$ python POPX.py
 ```
 
 ## Get in Touch
